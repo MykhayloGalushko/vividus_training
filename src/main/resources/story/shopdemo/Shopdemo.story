@@ -1,0 +1,1 @@
+Scenario: Navigate to the EPAM.com and check that title of the page is correct
