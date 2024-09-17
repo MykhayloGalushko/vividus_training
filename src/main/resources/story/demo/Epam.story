@@ -8,9 +8,9 @@ When I wait until element located by `cssSelector(.theme-switcher)` appears
 When I click on element located by `cssSelector(.theme-switcher)`
 Then number of elements found by `<classNameLocator>` is equal to `1`
 Examples:
-|classNameLocator |
+|classNameLocator     |
 |className(light-mode)|
-|className(dark-mode)|
+|className(dark-mode) |
 
 Scenario: Check that allows to change language to UA
 Given I am on main application page
@@ -28,13 +28,13 @@ When I scroll element located by `cssSelector(.policies)` into view
 When I change context to element located by `cssSelector(.policies)`
 Then text `<textToCheck>` exists
 Examples:
-|textToCheck|
-|INVESTORS|
-|COOKIE POLICY|
-|OPEN SOURCE|
+|textToCheck             |
+|INVESTORS               |
+|COOKIE POLICY           |
+|OPEN SOURCE             |
 |APPLICANT PRIVACY NOTICE|
-|PRIVACY POLICY|
-|WEB ACCESSIBILITY|
+|PRIVACY POLICY          |
+|WEB ACCESSIBILITY       |
 
 Scenario: Check that allow to switch location list by region
 Given I am on main application page
@@ -43,10 +43,10 @@ When I change context to element located by `id(id-890298b8-f4a7-3f75-8a76-be36d
 When I click on element located by `<locationName>`
 Then text `<countryName>` exists
 Examples:
-|locationName  | countryName |
-|name(AMERICAS)| CANADA      |
-|name(EMEA)    | ARMENIA     |
-|name(APAC)    | INDIA       |
+|locationName  |countryName|
+|name(AMERICAS)|CANADA     |
+|name(EMEA)    |ARMENIA    |
+|name(APAC)    |INDIA      |
 
 Scenario: Check the search function
 Given I am on main application page
@@ -59,7 +59,7 @@ Scenario: Check form's fields validation
 Given I am on main application page
 When I go to relative URL `/about/who-we-are/contact`
 When I click on element located by `name(SUBMIT)`
-Then text `This is a required field` exists
+Then number of elements found by `xpath(//input[@aria-required="true"])` is equal to `5`
 
 Scenario: Check that the Company logo on the header lead to the main page
 Given I am on main application page
@@ -72,8 +72,6 @@ Given I am on main application page
 When I go to relative URL `/about`
 When I click on element located by `caseInsensitiveText(Download)`
 Then page title is equal to `One of the Fastest-Growing Public Tech Companies | About EPAM`
-
-
 
 
 
