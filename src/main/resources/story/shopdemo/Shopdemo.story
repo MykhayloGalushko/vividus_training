@@ -1,77 +1,149 @@
-Scenario: Navigate to the EPAM.com and check that title of the page is correct
-Given I am on main application page
-Then page title is equal to `EPAM | Software Engineering & Product Development Services`
+Scenario: Verify that allows register a User
+Given I am on page with URL `https://demowebshop.tricentis.com/`
+Given I initialize story variable `userPassword` with value `#{generate(Internet.password)}`
+Given I initialize story variable `userFirstName` with value `#{generate(Name.firstName)}`
+Given I initialize story variable `userLastName` with value `#{generate(Name.lastName)}`
+Given I initialize story variable `userEmail` with value `#{generate(Internet.safeEmailAddress)}`
+When I wait until element located by `className(ico-register)` appears
+When I click on element located by `className(ico-register)`
+When I wait until element located by `id(FirstName)` appears
+When I wait until element located by `id(LastName)` appears
+When I wait until element located by `id(Email)` appears
+When I wait until element located by `id(Password)` appears
+When I wait until element located by `id(ConfirmPassword)` appears
+When I wait until element located by `id(gender-male)` appears
+When I click on element located by `id(gender-male)`
+When I enter `${userFirstName}` in field located by `id(FirstName)`
+When I enter `${userLastName}` in field located by `id(LastName)`
+When I enter `${userEmail}` in field located by `id(Email)`
+When I enter `${userPassword}` in field located by `id(Password)`
+When I enter `${userPassword}` in field located by `id(ConfirmPassword)`
+When I click on element located by `name(register-button)`
+When I wait until element located by `className(registration-result-page)` appears
+Then text `Your registration completed` exists
 
-Scenario: Check the ability to switch modes
-Given I am on main application page
-When I wait until element located by `cssSelector(.theme-switcher)` appears
-When I click on element located by `cssSelector(.theme-switcher)`
-Then number of elements found by `<classNameLocator>` is equal to `1`
+Scenario: Verify that allows login a User
+When I wait until element located by `className(ico-logout)` appears
+When I click on element located by `className(ico-logout)`
+When I wait until element located by `className(ico-login)` appears
+When I click on element located by `className(ico-login)`
+When I wait until element located by `id(Email)` appears
+When I wait until element located by `id(Password)` appears
+When I enter `${userEmail}` in field located by `id(Email)`
+When I enter `${userPassword}` in field located by `id(Password)`
+When I click on element located by `className(login-button)`
+Then the page with the URL 'https://demowebshop.tricentis.com/' is loaded
+Then number of elements found by `xpath(//a[normalize-space()='${userEmail}'])` is equal to `1`
+
+Scenario: Verify that ‘Computers’ group has 3 sub-groups with correct names
+When I click on element located by `xpath(//li[@class='<className>']//a[normalize-space()='Computers'])`
+Then number of elements found by `xpath(//div[@class='block block-category-navigation']//div[@class='listbox']/ul[@class='list']/li[@class='active']/ul[@class='sublist']/li/a)` is equal to `3`
+Then number of elements found by `xpath(//li[@class='inactive']//a[normalize-space()='<subcategoryName>'])` is equal to `1`
 Examples:
-|classNameLocator     |
-|className(light-mode)|
-|className(dark-mode) |
+|className|subcategoryName|
+|inactive |Desktops       |
+|active   |Notebooks      |
+|active   |Accessories    |
 
-Scenario: Check that allows to change language to UA
-Given I am on main application page
-When I wait until element located by `caseSensitiveText(Global (EN))` appears
-When I click on element located by `caseSensitiveText(Global (EN))`
-When I wait until element located by `className(location-selector__panel)` appears
-When I change context to element located `className(location-selector__panel)`
-When I click on element located by `caseSensitiveText(Україна (Українська))`
-Then the page with the URL 'https://careers.epam.ua/' is loaded
-Then page title is equal to `EPAM Ukraine - найбільша ІТ-компанія в Україні | Вакансії`
+Scenario: Verify that allows sorting items (different options)
+When I click on element located by `xpath(//li[@class='inactive']//a[normalize-space()='Desktops'])`
+Then dropdown located by `xpath(//select[@id='products-orderby'])` contains options:
+|state|item              |
+|true |Position          |
+|false|Name: A to Z      |
+|false|Name: Z to A      |
+|false|Price: Low to High|
+|false|Price: High to Low|
+|false|Created on        |
 
-Scenario: Check the policies list
-Given I am on main application page
-When I scroll element located by `cssSelector(.policies)` into view
-When I change context to element located by `cssSelector(.policies)`
-Then text `<textToCheck>` exists
+Scenario: Verify that allows changing number of items on page
+When I select `4` in dropdown located `xpath(//select[@id='products-pagesize'])`
+Then number of elements found by `xpath(//div[@class='item-box'])` is equal to `4`
+
+Scenario: Verify that allows adding an item to the cart
+When I click on element located by `xpath(//li[@class='inactive']//a[normalize-space()='<categoryName>'])`
+When I click on element located by `xpath(//a[normalize-space()='<productName>'])`
+When I click on element located by `xpath(//input[@class='button-1 add-to-cart-button'])`
+When I wait until element located by `xpath(//div[@id='bar-notification'])` appears
+When I hover mouse over element located `xpath(//li[@id='topcartlink']//a[@class='ico-cart'])`
+Then number of elements found by `xpath(//div[@id='flyout-cart']/div[@class='mini-shopping-cart']/div[@class='items']//div[@class='product']/div[@class='name']/a[@href='/<productURL>'])` is equal to `1`
+Then text `The product has been added to your shopping cart` exists
 Examples:
-|textToCheck             |
-|INVESTORS               |
-|COOKIE POLICY           |
-|OPEN SOURCE             |
-|APPLICANT PRIVACY NOTICE|
-|PRIVACY POLICY          |
-|WEB ACCESSIBILITY       |
+|categoryName|productName     |productURL     |
+|Notebooks   |14.1-inch Laptop|141-inch-laptop|
 
-Scenario: Check that allow to switch location list by region
-Given I am on main application page
-When I scroll element located by `By.caseSensitiveText(Our Locations)` into view
-When I change context to element located by `id(id-890298b8-f4a7-3f75-8a76-be36dc4490fd)`
-When I click on element located by `<locationName>`
-Then text `<countryName>` exists
+Scenario:Verify that allows removing an item from the card
+When I click on element located by `xpath(//li[@id='topcartlink']//a[@class='ico-cart'])`
+When I wait until element located by `xpath(//input[@name='removefromcart'])` appears
+When I click on element located by `xpath(//input[@name='removefromcart'])`
+When I click on element located by `xpath(//input[@name='updatecart'])`
+Then text `Your Shopping Cart is empty!` exists
+
+Scenario:Verify that allows checkout an item
+Given I am on page with URL `https://demowebshop.tricentis.com/`
+Given I initialize story variable `userCountry` with value `Algeria`
+Given I initialize story variable `userCity` with value `#{generate(Address.cityName)}`
+Given I initialize story variable `userAddress` with value `#{generate(Address.fullAddress)}`
+Given I initialize story variable `userZipCode` with value `#{generate(Address.zipCode)}`
+Given I initialize story variable `userPhoneNumber` with value `#{generate(PhoneNumber.cellPhone)}`
+When I click on element located by `xpath(//li[@class='inactive']//a[normalize-space()='Computers'])`
+When I click on element located by `xpath(//li[@class='inactive']//a[normalize-space()='<categoryName>'])`
+When I click on element located by `xpath(//a[normalize-space()='<productName>'])`
+When I click on element located by `xpath(//input[@class='button-1 add-to-cart-button'])`
+When I wait until element located by `xpath(//div[@id='bar-notification'])` appears
+When I click on element located by `xpath(//li[@id='topcartlink']//a[@class='ico-cart'])`
+When I click on element located by `xpath(//input[@id='termsofservice'])`
+When I click on element located by `xpath(//button[@id='checkout'])`
+When I enter `${userFirstName}` in field located by `xpath(//input[@id='BillingNewAddress_FirstName'])`
+When I enter `${userLastName}` in field located by `xpath(//input[@id='BillingNewAddress_LastName'])`
+When I enter `${userEmail}` in field located by `xpath(//input[@id='BillingNewAddress_Email'])`
+When I select `${userCountry}` in dropdown located `xpath(//select[@id='BillingNewAddress_CountryId'])`
+When I enter `${userCity}` in field located by `xpath(//input[@id='BillingNewAddress_City'])`
+When I enter `${userAddress}` in field located by `xpath(//input[@id='BillingNewAddress_Address1'])`
+When I enter `${userZipCode}` in field located by `xpath(//input[@id='BillingNewAddress_ZipPostalCode'])`
+When I enter `${userPhoneNumber}` in field located by `xpath(//input[@id='BillingNewAddress_PhoneNumber'])`
+When I click on element located by `xpath(//input[@title='Continue'])`
+When I wait until element located by `xpath(//select[@id='shipping-address-select'])` appears
+When I click on element located by `xpath(//div[@id='shipping-buttons-container']//input[@value='Continue'])`
+When I click on element located by `xpath(//div[@id='shipping-method-buttons-container']//input[@value='Continue'])`
+When I click on element located by `xpath(//div[@id='payment-method-buttons-container']//input[@value='Continue'])`
+When I wait until element located by `xpath(//div[@id='checkout-step-payment-info'])` appears
+When I click on element located by `xpath(//div[@id='payment-info-buttons-container']//input[@value='Continue'])`
+When I click on element located by `xpath(//input[@value='Confirm'])`
+Then text `Your order has been successfully processed!` exists
 Examples:
-|locationName  |countryName|
-|name(AMERICAS)|CANADA     |
-|name(EMEA)    |ARMENIA    |
-|name(APAC)    |INDIA      |
+|categoryName|productName     |productURL     |
+|Notebooks   |14.1-inch Laptop|141-inch-laptop|
 
-Scenario: Check the search function
-Given I am on main application page
-When I click on element located by `className(header-search__search-icon)`
-When I enter `AI` in field located by `id(new_form_search)`
-When I click on element located by `classname(bth-text-layer)`
-Then the page with the URL 'https://www.epam.com/search?q=AI' is loaded
 
-Scenario: Check form's fields validation
-Given I am on main application page
-When I go to relative URL `/about/who-we-are/contact`
-When I click on element located by `name(SUBMIT)`
-Then number of elements found by `xpath(//input[@aria-required="true"])` is equal to `5`
 
-Scenario: Check that the Company logo on the header lead to the main page
-Given I am on main application page
-When I go to relative URL `/about`
-When I click on element located by `className(header__logo-link)`
-Then the page with the URL 'https://www.epam.com/' is loaded
 
-Scenario: Check that allows to download report
-Given I am on main application page
-When I go to relative URL `/about`
-When I click on element located by `caseInsensitiveText(Download)`
-Then page title is equal to `One of the Fastest-Growing Public Tech Companies | About EPAM`
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
