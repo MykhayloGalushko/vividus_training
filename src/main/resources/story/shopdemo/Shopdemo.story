@@ -35,15 +35,15 @@ When I click on element located by `className(login-button)`
 Then the page with the URL 'https://demowebshop.tricentis.com/' is loaded
 Then number of elements found by `xpath(//a[normalize-space()='${userEmail}'])` is equal to `1`
 
-Scenario: Verify that ‘Computers’ group has 3 sub-groups with correct names
-When I click on element located by `xpath(//li[@class='<className>']//a[normalize-space()='Computers'])`
+Scenario: Verify that ‘Computers’ group has 3 sub-groups with correct nameslistbox
+When I click on element located by `xpath(//div[@class='listbox']//a[normalize-space()='Computers'])`
 Then number of elements found by `xpath(//div[@class='block block-category-navigation']//div[@class='listbox']/ul[@class='list']/li[@class='active']/ul[@class='sublist']/li/a)` is equal to `3`
-Then number of elements found by `xpath(//li[@class='inactive']//a[normalize-space()='<subcategoryName>'])` is equal to `1`
+Then number of elements found by `xpath(//div[@class='listbox']//a[normalize-space()='<subcategoryName>'])` is equal to `1`
 Examples:
-|className|subcategoryName|
-|inactive |Desktops       |
-|active   |Notebooks      |
-|active   |Accessories    |
+|subcategoryName|
+|Desktops       |
+|Notebooks      |
+|Accessories    |
 
 Scenario: Verify that allows sorting items (different options)
 When I click on element located by `xpath(//li[@class='inactive']//a[normalize-space()='Desktops'])`
@@ -105,10 +105,18 @@ When I enter `${userPhoneNumber}` in field located by `xpath(//input[@id='Billin
 When I click on element located by `xpath(//input[@title='Continue'])`
 When I wait until element located by `xpath(//select[@id='shipping-address-select'])` appears
 When I click on element located by `xpath(//div[@id='shipping-buttons-container']//input[@value='Continue'])`
+When I scroll element located by `xpath(//div[@id='shipping-method-buttons-container']//input[@value='Continue'])` into view
+When I wait until scroll is finished
 When I click on element located by `xpath(//div[@id='shipping-method-buttons-container']//input[@value='Continue'])`
+When I scroll element located by `xpath(//div[@id='payment-method-buttons-container']//input[@value='Continue'])` into view
+When I wait until scroll is finished
 When I click on element located by `xpath(//div[@id='payment-method-buttons-container']//input[@value='Continue'])`
 When I wait until element located by `xpath(//div[@id='checkout-step-payment-info'])` appears
+When I scroll element located by `xpath(//div[@id='payment-info-buttons-container']//input[@value='Continue'])` into view
+When I wait until scroll is finished
 When I click on element located by `xpath(//div[@id='payment-info-buttons-container']//input[@value='Continue'])`
+When I scroll element located by `xpath(//input[@value='Confirm'])` into view
+When I wait until scroll is finished
 When I click on element located by `xpath(//input[@value='Confirm'])`
 Then text `Your order has been successfully processed!` exists
 Examples:
